@@ -98,6 +98,8 @@ router.post('/login', loginValidation, validate, async (req, res) => {
                     phone: user.phone,
                     role: user.role,
                     verified: user.verified,
+                    verified: user.verified,
+                    profilePicture: user.profilePicture,
                     profile: user.profile,
                     createdAt: user.createdAt
                 },

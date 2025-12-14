@@ -61,9 +61,19 @@ app.get('/', (req, res) => {
     });
 });
 
+// Serve static files from uploads directory
+import path from 'path';
+import { fileURLToPath } from 'url';
+import uploadRoutes from './routes/upload.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
 // API Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/users', uploadRoutes); // Register upload route under /api/users
 app.use('/api/requests', bloodRequestRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/admin', adminAuthRoutes);      // Admin login and dashboard

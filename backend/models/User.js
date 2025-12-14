@@ -41,6 +41,10 @@ const userSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
+    profilePicture: {
+        type: String,
+        default: ''
+    },
     // Donor-specific profile fields
     profile: {
         bloodGroup: {
