@@ -8,6 +8,7 @@ interface AuthContextType {
   login: (email: string, password: string, role: string) => Promise<boolean>;
   logout: () => void;
   register: (userData: RegisterData) => Promise<{ success: boolean; message?: string }>;
+  updateUser: (userData: Partial<User>) => void;
   loading: boolean;
   token: string | null;
 }
@@ -85,6 +86,7 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => 
       phone: apiUser.phone,
       role: apiUser.role,
       verified: apiUser.verified,
+      profilePicture: apiUser.profilePicture,
       createdAt: apiUser.createdAt,
       profile: apiUser.profile
     };
@@ -177,8 +179,15 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => 
     localStorage.removeItem('bloodbank_token');
   };
 
+  const updateUser = (userData: Partial<User>) => {
+    setUser((prev) => {
+      if (!prev) return null;
+      return { ...prev, ...userData };
+    });
+  };
+
   return (
-    <AuthContext.Provider value={{ user, login, logout, register, loading, token }}>
+    <AuthContext.Provider value={{ user, login, logout, register, updateUser, loading, token }}>
       {children}
     </AuthContext.Provider>
   );

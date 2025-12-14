@@ -13,6 +13,8 @@ import { useAuth } from '../../contexts/AuthContext';
 import { DashboardCard } from '../../components/dashboard/DashboardCard';
 import { DonorEligibilityQuiz, type QuizResult } from '../../components/donor/DonorEligibilityQuiz';
 import { DonorAchievements } from '../../components/donor/DonorAchievements';
+import { ProfilePhotoUpload } from '../../components/common/ProfilePhotoUpload';
+import { ProfileUploadHelp } from '../../components/common/ProfileUploadHelp';
 import {
   Heart,
   Calendar,
@@ -26,7 +28,7 @@ import { motion } from 'framer-motion';
 import { format } from 'date-fns';
 
 export const DonorDashboard: React.FC = () => {
-  const { user } = useAuth();
+  const { user, login, updateUser } = useAuth(); // Assuming login or a new updateUser method is available
   const [showQuiz, setShowQuiz] = useState(false);
   const [quizCompleted, setQuizCompleted] = useState(false);
   const [lastQuizResult, setLastQuizResult] = useState<QuizResult | null>(null);
@@ -74,6 +76,11 @@ export const DonorDashboard: React.FC = () => {
     // fetch('/api/donors/quiz', { method: 'POST', body: JSON.stringify(result) });
   };
 
+  // Handle photo update
+  const handlePhotoUpdate = (newUrl: string) => {
+    updateUser({ profilePicture: newUrl });
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Eligibility Quiz Modal */}
@@ -87,9 +94,18 @@ export const DonorDashboard: React.FC = () => {
       <div className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900">Donor Dashboard</h1>
-              <p className="text-gray-600">Welcome back, {user?.name}</p>
+            <div className="flex items-center space-x-4">
+              <ProfilePhotoUpload
+                currentPhotoUrl={user?.profilePicture}
+                onUploadSuccess={handlePhotoUpdate}
+              />
+              <div>
+                <div className="flex items-center">
+                  <h1 className="text-2xl font-bold text-gray-900">Donor Dashboard</h1>
+                  <ProfileUploadHelp />
+                </div>
+                <p className="text-gray-600">Welcome back, {user?.name}</p>
+              </div>
             </div>
             <div className="flex items-center space-x-4">
               <div className="text-right">
@@ -116,8 +132,8 @@ export const DonorDashboard: React.FC = () => {
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             className={`mb-6 p-4 rounded-xl border-2 ${lastQuizResult.isEligible
-                ? 'bg-green-50 border-green-200'
-                : 'bg-red-50 border-red-200'
+              ? 'bg-green-50 border-green-200'
+              : 'bg-red-50 border-red-200'
               }`}
           >
             <div className="flex items-center justify-between">
@@ -180,8 +196,8 @@ export const DonorDashboard: React.FC = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
           className={`p-6 rounded-xl mb-8 border-2 ${isEligibleToDonate()
-              ? 'bg-green-50 border-green-200'
-              : 'bg-yellow-50 border-yellow-200'
+            ? 'bg-green-50 border-green-200'
+            : 'bg-yellow-50 border-yellow-200'
             }`}
         >
           <div className="flex items-center space-x-4">

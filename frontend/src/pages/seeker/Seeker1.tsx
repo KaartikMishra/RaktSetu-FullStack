@@ -1,13 +1,14 @@
 import { Card, CardHeader, CardTitle, CardContent } from "../../components/ui/card";
-import { Avatar, AvatarImage, AvatarFallback } from "../../components/ui/avatar";
 import { Separator } from "../../components/ui/separator";
 import { Progress } from "../../components/ui/progress";
 import { Button } from "../../components/ui/button";
-import { Input } from "../../components/ui/input"; 
-import { PlaceholdersAndVanishInput } from "@/components/ui/placeholders-and-vanish-input";  // ✅ Search bar ke liye import
+import { Input } from "../../components/ui/input";
 
 import BloodRequestForm from './BloodRequestForm';
 import { useState, useEffect } from 'react';
+import { useAuth } from '../../contexts/AuthContext';
+import { ProfilePhotoUpload } from '../../components/common/ProfilePhotoUpload';
+import { ProfileUploadHelp } from '../../components/common/ProfileUploadHelp';
 
 // Leaflet imports
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
@@ -22,9 +23,14 @@ const DefaultIcon = L.icon({
 L.Marker.prototype.options.icon = DefaultIcon;
 
 export default function BloodDashboard() {
+  const { user, updateUser } = useAuth();
   const [showRequestForm, setShowRequestForm] = useState(false);
   const [dateTime, setDateTime] = useState(new Date());
   const [searchQuery, setSearchQuery] = useState("");   // ✅ search bar ka state
+
+  const handlePhotoUpdate = (newUrl: string) => {
+    updateUser({ profilePicture: newUrl });
+  };
 
   useEffect(() => {
     setShowRequestForm(true);
@@ -48,7 +54,7 @@ export default function BloodDashboard() {
 
   return (
     <div className="min-h-screen bg-white text-gray-800 p-6 grid grid-cols-4 gap-6 font-sans">
-      
+
       {/* Header */}
       <header className="col-span-4 flex justify-between items-center border-b border-gray-200 pb-3">
         <h1 className="text-xl font-bold tracking-wide text-red-600">
@@ -63,7 +69,7 @@ export default function BloodDashboard() {
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-64 border-gray-300 focus:ring-red-500 focus:border-red-500"
           />
-          <Button 
+          <Button
             className="bg-red-600 hover:bg-red-700 text-white font-medium"
             onClick={() => setShowRequestForm(true)}
           >
@@ -84,15 +90,19 @@ export default function BloodDashboard() {
       {/* Target Profile */}
       <Card className="bg-white border border-gray-200 shadow-md hover:shadow-lg transition">
         <CardHeader className="flex items-center gap-3">
-          <Avatar className="w-16 h-16 ring-2 ring-red-500">
-            <AvatarImage src="https://via.placeholder.com/64" />
-            <AvatarFallback>TG</AvatarFallback>
-          </Avatar>
+          <ProfilePhotoUpload
+            currentPhotoUrl={user?.profilePicture}
+            onUploadSuccess={handlePhotoUpdate}
+          />
           <div>
-            <CardTitle className="text-base font-semibold text-gray-700">
-              Target Profile
-            </CardTitle>
-            <p className="text-xs text-gray-500">Patient ID: #12345</p>
+            <div className="flex items-center gap-2">
+              <CardTitle className="text-base font-semibold text-gray-700">
+                {user?.name || "Seeker Profile"}
+              </CardTitle>
+              <ProfileUploadHelp />
+            </div>
+            <p className="text-xs text-gray-500">{user?.email}</p>
+            <p className="text-xs text-gray-400 capitalize">{user?.role} Account</p>
           </div>
         </CardHeader>
         <CardContent className="space-y-3 text-sm">

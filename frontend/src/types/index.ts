@@ -6,6 +6,7 @@ export interface User {
   role: 'admin' | 'donor' | 'seeker' | 'hospital';
   verified: boolean;
   createdAt: string;
+  profilePicture?: string;
   profile?: DonorProfile | HospitalProfile;
 }
 

@@ -8,6 +8,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
+import { ProfilePhotoUpload } from '../../components/common/ProfilePhotoUpload';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Droplet,
@@ -156,8 +157,8 @@ const InventoryModal: React.FC<InventoryModalProps> = ({
               onClick={handleSubmit}
               disabled={!units || isLoading}
               className={`flex-1 px-4 py-2 text-white rounded-lg disabled:opacity-50 ${action === 'add' ? 'bg-green-600 hover:bg-green-700' :
-                  action === 'update' ? 'bg-blue-600 hover:bg-blue-700' :
-                    'bg-red-600 hover:bg-red-700'
+                action === 'update' ? 'bg-blue-600 hover:bg-blue-700' :
+                  'bg-red-600 hover:bg-red-700'
                 }`}
             >
               {isLoading ? 'Processing...' : config.title}
@@ -171,7 +172,7 @@ const InventoryModal: React.FC<InventoryModalProps> = ({
 
 // Main Hospital Dashboard Component
 export const HospitalDashboard: React.FC = () => {
-  const { user, token } = useAuth();
+  const { user, token, updateUser } = useAuth();
 
   // Inventory state
   const [inventory, setInventory] = useState<InventoryItem[]>([]);
@@ -188,6 +189,12 @@ export const HospitalDashboard: React.FC = () => {
   const [donors, setDonors] = useState<EligibleDonor[]>([]);
   const [donorsLoading, setDonorsLoading] = useState(false);
   const [reminderSuccess, setReminderSuccess] = useState('');
+
+  // Handle photo update
+  // Handle photo update
+  const handlePhotoUpdate = (newUrl: string) => {
+    updateUser({ profilePicture: newUrl });
+  };
 
   // Fetch inventory on mount
   useEffect(() => {
@@ -309,11 +316,18 @@ export const HospitalDashboard: React.FC = () => {
       <div className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900">Hospital Dashboard</h1>
-              <p className="text-gray-600">
-                Welcome, {(user?.profile as any)?.hospitalName || user?.name}
-              </p>
+            <div className="flex items-center space-x-4">
+              <ProfilePhotoUpload
+                currentPhotoUrl={user?.profilePicture}
+                onUploadSuccess={handlePhotoUpdate}
+                variant="square"
+              />
+              <div>
+                <h1 className="text-2xl font-bold text-gray-900">Hospital Dashboard</h1>
+                <p className="text-gray-600">
+                  Welcome, {(user?.profile as any)?.hospitalName || user?.name}
+                </p>
+              </div>
             </div>
             <div className="flex items-center space-x-2">
               <Package className="h-5 w-5 text-red-600" />
